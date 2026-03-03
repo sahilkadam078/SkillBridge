@@ -1,0 +1,221 @@
+<div class="container-fluid" style="min-height:85vh;">
+  <div class="row h-100">
+
+    <!-- ================= SIDEBAR ================= -->
+    <div class="col-md-3 bg-light border-end d-flex flex-column p-4">
+
+      <h5 class="fw-bold mb-4">Student Panel</h5>
+
+      <a href="/student/dashboard"
+        class="nav-link mb-2 <%= section === 'dashboard' ? 'text-primary fw-bold' : 'text-dark' %>">
+        Dashboard
+      </a>
+
+      <a href="/student/dashboard?section=applied"
+        class="nav-link mb-2 <%= section === 'applied' ? 'text-primary fw-bold' : 'text-dark' %>">
+        Applied Internships
+      </a>
+
+      <a href="/student/dashboard?section=approved"
+        class="nav-link mb-2 <%= section === 'approved' ? 'text-primary fw-bold' : 'text-dark' %>">
+        Approved
+      </a>
+
+      <a href="/student/dashboard?section=cancelled"
+        class="nav-link mb-2 <%= section === 'cancelled' ? 'text-primary fw-bold' : 'text-dark' %>">
+        Cancelled
+      </a>
+
+      <a href="/student/dashboard?section=profile"
+        class="nav-link mb-2 <%= section === 'profile' ? 'text-primary fw-bold' : 'text-dark' %>">
+        Edit Profile
+      </a>
+
+      <a href="/student/dashboard?section=reset"
+        class="nav-link mb-2 <%= section === 'reset' ? 'text-primary fw-bold' : 'text-dark' %>">
+        Reset Password
+      </a>
+
+    </div>
+
+
+    <!-- ================= MAIN CONTENT ================= -->
+    <div class="col-md-9 p-5">
+
+      <!-- ========= DASHBOARD ========= -->
+      <% if(section === "dashboard") { %>
+
+        <h2 class="mb-4 fw-semibold">Opening Jobs</h2>
+
+        <div class="row">
+
+          <div class="col-md-6 mb-4">
+            <div class="card shadow-sm border-0 h-100">
+              <div class="card-body">
+                <h5 class="card-title fw-semibold">Frontend Developer Intern</h5>
+                <p class="text-muted">Skills: HTML, CSS, JavaScript</p>
+                <button class="btn btn-primary">Apply</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-6 mb-4">
+            <div class="card shadow-sm border-0 h-100">
+              <div class="card-body">
+                <h5 class="card-title fw-semibold">Backend Developer Intern</h5>
+                <p class="text-muted">Skills: Node.js, MySQL</p>
+                <button class="btn btn-primary">Apply</button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+
+      <!-- ========= PROFILE ========= -->
+      <% } else if(section === "profile") { %>
+
+        <h2 class="mb-4 fw-semibold">Edit Profile</h2>
+
+        <form action="/student/profile/save" method="POST">
+
+          <div class="mb-3">
+            <label class="form-label">Full Name</label>
+            <input type="text" name="name" class="form-control"
+              value="<%= profile?.name || '' %>" required>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Address</label>
+            <textarea name="address" class="form-control"><%= profile?.address || '' %></textarea>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Personal Bio</label>
+            <textarea name="bio" class="form-control"><%= profile?.bio || '' %></textarea>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Skills (Hold Ctrl to select multiple)</label>
+            <select name="skills" class="form-control" multiple>
+              <% const skillList = ["HTML","CSS","JavaScript","Node.js","MySQL","React","MongoDB","Python"]; %>
+              <% skillList.forEach(skill => { %>
+                <option value="<%= skill %>"
+                  <%= profile?.skills?.includes(skill) ? "selected" : "" %>>
+                  <%= skill %>
+                </option>
+              <% }) %>
+            </select>
+          </div>
+
+          <h5 class="mt-4">Experience</h5>
+
+          <div class="mb-3">
+            <label class="form-label">Role</label>
+            <input type="text" name="experience_role" class="form-control"
+              value="<%= profile?.experience_role || '' %>">
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Company</label>
+            <input type="text" name="experience_company" class="form-control"
+              value="<%= profile?.experience_company || '' %>">
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">GitHub Link</label>
+            <input type="url" name="github" class="form-control"
+              value="<%= profile?.github || '' %>">
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">LinkedIn Link</label>
+            <input type="url" name="linkedin" class="form-control"
+              value="<%= profile?.linkedin || '' %>">
+          </div>
+
+          <button class="btn btn-primary mt-2">
+            Save Profile
+          </button>
+
+        </form>
+
+
+      <!-- ========= APPLIED ========= -->
+      <% } else if(section === "applied") { %>
+
+        <h2 class="mb-4 fw-semibold">Applied Internships</h2>
+        <p class="text-muted">You haven’t applied yet.</p>
+
+
+      <!-- ========= APPROVED ========= -->
+      <% } else if(section === "approved") { %>
+
+        <h2 class="mb-4 fw-semibold">Approved Internships</h2>
+        <p class="text-muted">No approved internships yet.</p>
+
+
+      <!-- ========= CANCELLED ========= -->
+      <% } else if(section === "cancelled") { %>
+
+        <h2 class="mb-4 fw-semibold">Cancelled Internships</h2>
+        <p class="text-muted">No cancelled internships.</p>
+
+
+      <!-- ========= RESET PASSWORD ========= -->
+      <% } else if(section === "reset") { %>
+
+        <div class="row justify-content-center">
+          <div class="col-md-6">
+
+            <h3 class="mb-4 fw-semibold">Reset Password</h3>
+
+            <form method="POST" action="/student/reset-password">
+
+              <div class="mb-3">
+                <label class="form-label">Email Address</label>
+                <input type="email"
+                  class="form-control"
+                  value="<%= user.email %>"
+                  readonly>
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label">Current Password</label>
+                <input type="password"
+                  name="currentPassword"
+                  class="form-control"
+                  required>
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label">New Password</label>
+                <input type="password"
+                  name="password"
+                  class="form-control"
+                  required>
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label">Confirm Password</label>
+                <input type="password"
+                  name="confirmPassword"
+                  class="form-control"
+                  required>
+              </div>
+
+              <button class="btn btn-danger w-100">
+                Change Password
+              </button>
+
+            </form>
+
+          </div>
+        </div>
+
+      <% } %>
+
+    </div>
+
+  </div>
+</div>
