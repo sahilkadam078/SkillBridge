@@ -1,0 +1,48 @@
+<div class="container mt-5">
+
+  <h2 class="mb-4">Applicants</h2>
+
+  <% if(applicants.length === 0) { %>
+    <p class="text-muted">No applications yet.</p>
+  <% } else { %>
+
+    <% applicants.forEach(app => { %>
+
+      <div class="card shadow-sm border-0 mb-3">
+        <div class="card-body">
+
+          <h5 class="fw-semibold"><%= app.name %></h5>
+          <p class="mb-1">Email: <%= app.email %></p>
+          <p>Status: 
+            <span class="badge bg-secondary"><%= app.status %></span>
+          </p>
+
+          <form method="POST"
+            action="/recruiter/application/<%= app.application_id %>">
+
+            <button name="status"
+                    value="approved"
+                    class="btn btn-success btn-sm me-2">
+              Approve
+            </button>
+
+            <button name="status"
+                    value="cancelled"
+                    class="btn btn-danger btn-sm">
+              Cancel
+            </button>
+
+          </form>
+
+        </div>
+      </div>
+
+    <% }) %>
+
+  <% } %>
+
+  <a href="/recruiter/dashboard" class="btn btn-secondary mt-3">
+    Back
+  </a>
+
+</div>

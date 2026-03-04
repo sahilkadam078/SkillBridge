@@ -2,21 +2,20 @@
   <div class="container">
 
     <!-- Dynamic Logo Redirect -->
-    <% if (user) { %>
-        <% if (user.role === "student") { %>
-            <a class="navbar-brand fw-bold text-primary" href="/student/dashboard">
-                SkillBridge
-            </a>
-        <% } else { %>
-            <a class="navbar-brand fw-bold text-primary" href="/recruiter/dashboard">
-                SkillBridge
-            </a>
-        <% } %>
-    <% } else { %>
-        <a class="navbar-brand fw-bold text-primary" href="/">
-            SkillBridge
-        </a>
-    <% } %>
+    <%
+      let logoLink = "/";
+      if (user) {
+        logoLink = user.role === "student"
+          ? "/student/dashboard?section=jobs"
+          : "/recruiter/dashboard";
+      }
+    %>
+
+    <a class="navbar-brand d-flex align-items-center fw-bold text-primary"
+       href="<%= logoLink %>">
+        <i class="bi bi-lightning-charge-fill me-2" style="font-size:1.4rem;"></i>
+        SkillBridge
+    </a>
 
     <div class="ms-auto">
       <% if(!user) { %>
@@ -25,12 +24,13 @@
       <% } else { %>
 
         <% if(user.role === "student") { %>
-            <!-- Open Profile Section Inside Dashboard -->
-            <a href="/student/dashboard?section=profile" class="btn btn-primary me-2">
+            <a href="/student/dashboard?section=profile"
+               class="btn btn-primary me-2">
                 Profile
             </a>
         <% } else { %>
-            <a href="/recruiter/dashboard" class="btn btn-primary me-2">
+            <a href="/recruiter/dashboard"
+               class="btn btn-primary me-2">
                 Dashboard
             </a>
         <% } %>
@@ -38,6 +38,7 @@
         <a href="/logout" class="btn btn-outline-danger">Logout</a>
       <% } %>
     </div>
+
   </div>
 </nav>
 

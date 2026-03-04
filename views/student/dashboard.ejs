@@ -1,14 +1,14 @@
 <div class="container-fluid" style="min-height:85vh;">
   <div class="row h-100">
 
-    <!-- ================= SIDEBAR ================= -->
+    <!-- SIDEBAR -->
     <div class="col-md-3 bg-light border-end d-flex flex-column p-4">
 
       <h5 class="fw-bold mb-4">Student Panel</h5>
 
-      <a href="/student/dashboard"
-        class="nav-link mb-2 <%= section === 'dashboard' ? 'text-primary fw-bold' : 'text-dark' %>">
-        Dashboard
+      <a href="/student/dashboard?section=jobs"
+        class="nav-link mb-2 <%= section === 'jobs' ? 'text-primary fw-bold' : 'text-dark' %>">
+        Opening Jobs
       </a>
 
       <a href="/student/dashboard?section=applied"
@@ -26,11 +26,6 @@
         Cancelled
       </a>
 
-      <a href="/student/dashboard?section=profile"
-        class="nav-link mb-2 <%= section === 'profile' ? 'text-primary fw-bold' : 'text-dark' %>">
-        Edit Profile
-      </a>
-
       <a href="/student/dashboard?section=reset"
         class="nav-link mb-2 <%= section === 'reset' ? 'text-primary fw-bold' : 'text-dark' %>">
         Reset Password
@@ -38,51 +33,85 @@
 
     </div>
 
-
-    <!-- ================= MAIN CONTENT ================= -->
+    <!-- MAIN CONTENT -->
     <div class="col-md-9 p-5">
 
-      <!-- ========= DASHBOARD ========= -->
-      <% if(section === "dashboard") { %>
+      <!-- OPENING JOBS -->
+      <% if(section === "jobs") { %>
 
         <h2 class="mb-4 fw-semibold">Opening Jobs</h2>
 
+        <% if(internships.length === 0) { %>
+          <p class="text-muted">No internships available.</p>
+        <% } else { %>
+
         <div class="row">
+          <% internships.forEach(job => { %>
+            <div class="col-md-6 mb-4">
+              <div class="card shadow-sm border-0 h-100">
+                <div class="card-body">
+                  <h5 class="fw-semibold"><%= job.title %></h5>
+                  <p class="text-muted">Skills: <%= job.required_skills %></p>
 
-          <div class="col-md-6 mb-4">
-            <div class="card shadow-sm border-0 h-100">
-              <div class="card-body">
-                <h5 class="card-title fw-semibold">Frontend Developer Intern</h5>
-                <p class="text-muted">Skills: HTML, CSS, JavaScript</p>
-                <button class="btn btn-primary">Apply</button>
+                  <form method="POST" action="/student/apply/<%= job.id %>">
+                    <button class="btn btn-primary">Apply</button>
+                  </form>
+
+                </div>
               </div>
             </div>
-          </div>
-
-          <div class="col-md-6 mb-4">
-            <div class="card shadow-sm border-0 h-100">
-              <div class="card-body">
-                <h5 class="card-title fw-semibold">Backend Developer Intern</h5>
-                <p class="text-muted">Skills: Node.js, MySQL</p>
-                <button class="btn btn-primary">Apply</button>
-              </div>
-            </div>
-          </div>
-
+          <% }) %>
         </div>
 
+        <% } %>
 
-      <!-- ========= PROFILE ========= -->
-      <% } else if(section === "profile") { %>
+      <% } %>
+
+
+      <!-- APPLIED / APPROVED / CANCELLED -->
+      <% if(section === "applied" || section === "approved" || section === "cancelled") { %>
+
+        <h2 class="mb-4 fw-semibold text-capitalize"><%= section %> Internships</h2>
+
+        <% if(applications.length === 0) { %>
+          <p class="text-muted">No records found.</p>
+        <% } else { %>
+
+          <div class="row">
+            <% applications.forEach(app => { %>
+              <div class="col-md-6 mb-4">
+                <div class="card shadow-sm border-0 h-100">
+                  <div class="card-body">
+
+                    <h5 class="fw-semibold"><%= app.title %></h5>
+                    <p class="text-muted">Skills: <%= app.required_skills %></p>
+
+                    <span class="badge bg-secondary">
+                      <%= app.status %>
+                    </span>
+
+                  </div>
+                </div>
+              </div>
+            <% }) %>
+          </div>
+
+        <% } %>
+
+      <% } %>
+
+
+      <!-- PROFILE SECTION -->
+      <% if(section === "profile") { %>
 
         <h2 class="mb-4 fw-semibold">Edit Profile</h2>
 
-        <form action="/student/profile/save" method="POST">
+        <form action="/student/profile/save" method="POST" class="mb-5">
 
           <div class="mb-3">
             <label class="form-label">Full Name</label>
             <input type="text" name="name" class="form-control"
-              value="<%= profile?.name || '' %>" required>
+              value="<%= user.name %>" required>
           </div>
 
           <div class="mb-3">
@@ -91,79 +120,37 @@
           </div>
 
           <div class="mb-3">
-            <label class="form-label">Personal Bio</label>
-            <textarea name="bio" class="form-control"><%= profile?.bio || '' %></textarea>
+            <label class="form-label">Skills</label>
+            <input type="text" name="skills" class="form-control"
+              value="<%= profile?.skills || '' %>"
+              placeholder="HTML, CSS, JS, Node">
           </div>
 
           <div class="mb-3">
-            <label class="form-label">Skills (Hold Ctrl to select multiple)</label>
-            <select name="skills" class="form-control" multiple>
-              <% const skillList = ["HTML","CSS","JavaScript","Node.js","MySQL","React","MongoDB","Python"]; %>
-              <% skillList.forEach(skill => { %>
-                <option value="<%= skill %>"
-                  <%= profile?.skills?.includes(skill) ? "selected" : "" %>>
-                  <%= skill %>
-                </option>
-              <% }) %>
-            </select>
-          </div>
-
-          <h5 class="mt-4">Experience</h5>
-
-          <div class="mb-3">
-            <label class="form-label">Role</label>
-            <input type="text" name="experience_role" class="form-control"
-              value="<%= profile?.experience_role || '' %>">
+            <label class="form-label">GitHub</label>
+            <input type="text" name="github" class="form-control"
+              value="<%= profile?.github || '' %>"
+              placeholder="https://github.com/username">
           </div>
 
           <div class="mb-3">
-            <label class="form-label">Company</label>
-            <input type="text" name="experience_company" class="form-control"
-              value="<%= profile?.experience_company || '' %>">
+            <label class="form-label">LinkedIn</label>
+            <input type="text" name="linkedin" class="form-control"
+              value="<%= profile?.linkedin || '' %>"
+              placeholder="https://linkedin.com/in/username">
           </div>
 
-          <div class="mb-3">
-            <label class="form-label">GitHub Link</label>
-            <input type="url" name="github" class="form-control"
-              value="<%= profile?.github || '' %>">
-          </div>
-
-          <div class="mb-3">
-            <label class="form-label">LinkedIn Link</label>
-            <input type="url" name="linkedin" class="form-control"
-              value="<%= profile?.linkedin || '' %>">
-          </div>
-
-          <button class="btn btn-primary mt-2">
+          <button class="btn btn-primary">
             Save Profile
           </button>
 
         </form>
 
-
-      <!-- ========= APPLIED ========= -->
-      <% } else if(section === "applied") { %>
-
-        <h2 class="mb-4 fw-semibold">Applied Internships</h2>
-        <p class="text-muted">You haven’t applied yet.</p>
+      <% } %>
 
 
-      <!-- ========= APPROVED ========= -->
-      <% } else if(section === "approved") { %>
-
-        <h2 class="mb-4 fw-semibold">Approved Internships</h2>
-        <p class="text-muted">No approved internships yet.</p>
-
-
-      <!-- ========= CANCELLED ========= -->
-      <% } else if(section === "cancelled") { %>
-
-        <h2 class="mb-4 fw-semibold">Cancelled Internships</h2>
-        <p class="text-muted">No cancelled internships.</p>
-
-
-      <!-- ========= RESET PASSWORD ========= -->
-      <% } else if(section === "reset") { %>
+      <!-- RESET PASSWORD -->
+      <% if(section === "reset") { %>
 
         <div class="row justify-content-center">
           <div class="col-md-6">
@@ -173,35 +160,27 @@
             <form method="POST" action="/student/reset-password">
 
               <div class="mb-3">
-                <label class="form-label">Email Address</label>
-                <input type="email"
-                  class="form-control"
-                  value="<%= user.email %>"
-                  readonly>
+                <label class="form-label">Email</label>
+                <input type="email" class="form-control"
+                  value="<%= user.email %>" readonly>
               </div>
 
               <div class="mb-3">
                 <label class="form-label">Current Password</label>
-                <input type="password"
-                  name="currentPassword"
-                  class="form-control"
-                  required>
+                <input type="password" name="currentPassword"
+                  class="form-control" required>
               </div>
 
               <div class="mb-3">
                 <label class="form-label">New Password</label>
-                <input type="password"
-                  name="password"
-                  class="form-control"
-                  required>
+                <input type="password" name="password"
+                  class="form-control" required>
               </div>
 
               <div class="mb-3">
                 <label class="form-label">Confirm Password</label>
-                <input type="password"
-                  name="confirmPassword"
-                  class="form-control"
-                  required>
+                <input type="password" name="confirmPassword"
+                  class="form-control" required>
               </div>
 
               <button class="btn btn-danger w-100">

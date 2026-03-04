@@ -1,4 +1,82 @@
-<div class="container mt-5">
-    <h2>Recruiter Dashboard</h2>
-    <p>Welcome <%= user.name %></p>
+<div class="container-fluid" style="min-height:85vh;">
+  <div class="row">
+
+    <!-- LEFT SIDE -->
+    <div class="col-md-3 bg-light border-end p-4">
+      <h5 class="fw-bold mb-4">Recruiter Panel</h5>
+
+      <a href="/recruiter/dashboard"
+        class="nav-link text-primary fw-bold mb-2">
+        My Internships
+      </a>
+
+    </div>
+
+
+    <!-- RIGHT SIDE -->
+    <div class="col-md-9 p-5">
+
+      <h2 class="mb-4 fw-semibold">Add Internship</h2>
+
+      <!-- ADD INTERNSHIP FORM -->
+      <div class="card shadow-sm border-0 mb-5">
+        <div class="card-body">
+
+          <form method="POST" action="/recruiter/add">
+
+            <div class="mb-3">
+              <label class="form-label">Internship Title</label>
+              <input type="text" name="title" class="form-control" required>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Description</label>
+              <textarea name="description" class="form-control" rows="3"></textarea>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Required Skills</label>
+              <input type="text" name="required_skills"
+                class="form-control"
+                placeholder="HTML, CSS, JS">
+            </div>
+
+            <button class="btn btn-primary">
+              Add Internship
+            </button>
+
+          </form>
+
+        </div>
+      </div>
+
+
+      <!-- MY INTERNSHIPS -->
+      <h4 class="mb-3">My Internships</h4>
+
+      <% if(internships.length === 0) { %>
+        <p class="text-muted">No internships added yet.</p>
+      <% } else { %>
+
+        <% internships.forEach(job => { %>
+          <div class="card shadow-sm border-0 mb-3">
+            <div class="card-body">
+
+              <h5 class="fw-semibold"><%= job.title %></h5>
+              <p class="text-muted"><%= job.required_skills %></p>
+
+              <a href="/recruiter/applicants/<%= job.id %>"
+                class="btn btn-outline-primary btn-sm">
+                View Applicants
+              </a>
+
+            </div>
+          </div>
+        <% }) %>
+
+      <% } %>
+
+    </div>
+
+  </div>
 </div>

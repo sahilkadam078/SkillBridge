@@ -1,6 +1,7 @@
 body {
     background-color: #F9FAFB;
     font-family: 'Segoe UI', sans-serif;
+    padding-top: 1px;
 }
 
 /* Hero Section */
@@ -41,4 +42,8 @@ body {
 
 .btn-primary:hover {
     background-color: #4338CA;
+}
+
+.navbar {
+    backdrop-filter: blur(8px);
 }

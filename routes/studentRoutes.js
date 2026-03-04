@@ -1,8 +1,9 @@
 const express = require("express");
 const router = express.Router();
 const db = require("../config/db");
+const bcrypt = require("bcrypt");
 
-// middleware
+// ================= MIDDLEWARE =================
 function isStudent(req, res, next) {
     if (!req.session.user || req.session.user.role !== "student") {
         return res.redirect("/login");
@@ -10,91 +11,184 @@ function isStudent(req, res, next) {
     next();
 }
 
+// ================= STUDENT PANEL =================
 router.get("/dashboard", isStudent, async (req, res) => {
-    const section = req.query.section || "dashboard";
+    const section = req.query.section || "jobs";
     const userId = req.session.user.id;
 
+    let internships = [];
+    let applications = [];
     let profile = null;
 
-    if (section === "profile") {
-        const [rows] = await db.query(
+    try {
+
+        // OPENING JOBS
+        if (section === "jobs") {
+            const [rows] = await db.query(
+                "SELECT * FROM internships WHERE status='open'"
+            );
+            internships = rows;
+        }
+
+        // APPLIED
+        if (section === "applied") {
+            const [rows] = await db.query(
+                `SELECT i.*, a.status
+                 FROM applications a
+                 JOIN internships i ON a.internship_id = i.id
+                 WHERE a.student_id = ? AND a.status='applied'`,
+                [userId]
+            );
+            applications = rows;
+        }
+
+        // APPROVED
+        if (section === "approved") {
+            const [rows] = await db.query(
+                `SELECT i.*, a.status
+                 FROM applications a
+                 JOIN internships i ON a.internship_id = i.id
+                 WHERE a.student_id = ? AND a.status='approved'`,
+                [userId]
+            );
+            applications = rows;
+        }
+
+        // CANCELLED
+        if (section === "cancelled") {
+            const [rows] = await db.query(
+                `SELECT i.*, a.status
+                 FROM applications a
+                 JOIN internships i ON a.internship_id = i.id
+                 WHERE a.student_id = ? AND a.status='cancelled'`,
+                [userId]
+            );
+            applications = rows;
+        }
+
+        // PROFILE FETCH
+        if (section === "profile") {
+            const [rows] = await db.query(
+                "SELECT * FROM student_profiles WHERE user_id = ?",
+                [userId]
+            );
+
+            if (rows.length > 0) {
+                profile = rows[0];
+            }
+        }
+
+        res.render("student/dashboard", {
+            section,
+            internships,
+            applications,
+            profile
+        });
+
+    } catch (error) {
+        console.log(error);
+        res.send("Something went wrong");
+    }
+});
+
+
+// ================= SAVE / UPDATE PROFILE =================
+router.post("/profile/save", isStudent, async (req, res) => {
+    const userId = req.session.user.id;
+    const { name, address, skills, github, linkedin } = req.body;
+
+    try {
+        const [existing] = await db.query(
             "SELECT * FROM student_profiles WHERE user_id = ?",
             [userId]
         );
-        profile = rows[0] || null;
-    }
 
-    res.render("student/dashboard", {
-        section,
-        profile
-    });
+        if (existing.length > 0) {
+            // UPDATE
+            await db.query(
+                `UPDATE student_profiles
+                 SET name=?, address=?, skills=?, github=?, linkedin=?
+                 WHERE user_id=?`,
+                [name, address, skills, github, linkedin, userId]
+            );
+        } else {
+            // INSERT
+            await db.query(
+                `INSERT INTO student_profiles
+                 (user_id, name, address, skills, github, linkedin)
+                 VALUES (?, ?, ?, ?, ?, ?)`,
+                [userId, name, address, skills, github, linkedin]
+            );
+        }
+
+        req.flash("success", "Profile saved successfully");
+        res.redirect("/student/dashboard?section=profile");
+
+    } catch (error) {
+        console.log(error);
+        res.send("Profile save error");
+    }
 });
 
-router.post("/profile/save", isStudent, async (req, res) => {
-    const userId = req.session.user.id;
 
-    const {
-        name,
-        address,
-        bio,
-        skills,
-        experience_role,
-        experience_company,
-        github,
-        linkedin
-    } = req.body;
+// ================= APPLY =================
+router.post("/apply/:id", isStudent, async (req, res) => {
+    const internshipId = req.params.id;
+    const studentId = req.session.user.id;
 
-    const skillsString = Array.isArray(skills)
-        ? skills.join(",")
-        : skills || "";
-
-    const [existing] = await db.query(
-        "SELECT id FROM student_profiles WHERE user_id = ?",
-        [userId]
-    );
-
-    if (existing.length > 0) {
+    try {
         await db.query(
-            `UPDATE student_profiles 
-             SET name=?, address=?, bio=?, skills=?, 
-                 experience_role=?, experience_company=?, 
-                 github=?, linkedin=? 
-             WHERE user_id=?`,
-            [
-                name,
-                address,
-                bio,
-                skillsString,
-                experience_role,
-                experience_company,
-                github,
-                linkedin,
-                userId
-            ]
+            "INSERT IGNORE INTO applications (student_id, internship_id) VALUES (?, ?)",
+            [studentId, internshipId]
         );
-    } else {
-        await db.query(
-            `INSERT INTO student_profiles 
-             (user_id, name, address, bio, skills, 
-              experience_role, experience_company, 
-              github, linkedin) 
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-            [
-                userId,
-                name,
-                address,
-                bio,
-                skillsString,
-                experience_role,
-                experience_company,
-                github,
-                linkedin
-            ]
-        );
+
+        res.redirect("/student/dashboard?section=applied");
+
+    } catch (error) {
+        console.log(error);
+        res.send("Application error");
+    }
+});
+
+
+// ================= RESET PASSWORD =================
+router.post("/reset-password", isStudent, async (req, res) => {
+    const { currentPassword, password, confirmPassword } = req.body;
+
+    if (password !== confirmPassword) {
+        req.flash("error", "Passwords do not match");
+        return res.redirect("/student/dashboard?section=reset");
     }
 
-    req.flash("success", "Profile saved successfully");
-    res.redirect("/student/dashboard?section=profile");
+    try {
+        const [rows] = await db.query(
+            "SELECT password FROM users WHERE id = ?",
+            [req.session.user.id]
+        );
+
+        const user = rows[0];
+
+        const match = await bcrypt.compare(currentPassword, user.password);
+
+        if (!match) {
+            req.flash("error", "Current password incorrect");
+            return res.redirect("/student/dashboard?section=reset");
+        }
+
+        const hashed = await bcrypt.hash(password, 10);
+
+        await db.query(
+            "UPDATE users SET password = ? WHERE id = ?",
+            [hashed, req.session.user.id]
+        );
+
+        req.flash("success", "Password updated successfully");
+        res.redirect("/student/dashboard?section=jobs");
+
+    } catch (error) {
+        console.log(error);
+        res.send("Password update error");
+    }
 });
 
 module.exports = router;
