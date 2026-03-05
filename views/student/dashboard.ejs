@@ -31,168 +31,206 @@
         Reset Password
       </a>
 
+      <!-- FILTER SECTION -->
+      <hr class="mt-4">
+
+      <h6 class="fw-bold mt-2">Search Internships</h6>
+
+      <form method="GET" action="/student/dashboard">
+
+        <input type="hidden" name="section" value="jobs">
+
+        <div class="mb-2">
+          <input type="text" name="keyword" class="form-control form-control-sm" placeholder="Search by skill or role">
+        </div>
+
+        <button class="btn btn-sm btn-primary w-100">
+          Search
+        </button>
+
+      </form>
+
     </div>
 
     <!-- MAIN CONTENT -->
     <div class="col-md-9 p-5">
 
       <!-- OPENING JOBS -->
-      <% if(section === "jobs") { %>
+      <% if(section==="jobs" ) { %>
 
         <h2 class="mb-4 fw-semibold">Opening Jobs</h2>
 
-        <% if(internships.length === 0) { %>
+        <% if(internships.length===0) { %>
           <p class="text-muted">No internships available.</p>
-        <% } else { %>
+          <% } else { %>
 
-        <div class="row">
-          <% internships.forEach(job => { %>
-            <div class="col-md-6 mb-4">
-              <div class="card shadow-sm border-0 h-100">
-                <div class="card-body">
-                  <h5 class="fw-semibold"><%= job.title %></h5>
-                  <p class="text-muted">Skills: <%= job.required_skills %></p>
+            <div class="row">
+              <% internships.forEach(job=> { %>
 
-                  <form method="POST" action="/student/apply/<%= job.id %>">
-                    <button class="btn btn-primary">Apply</button>
-                  </form>
+                <div class="col-md-6 mb-4">
+                  <div class="card shadow-sm border-0 h-100">
 
-                </div>
-              </div>
-            </div>
-          <% }) %>
-        </div>
+                    <div class="card-body">
 
-        <% } %>
+                      <h5 class="fw-semibold">
+                        <%= job.title %>
+                      </h5>
 
-      <% } %>
+                      <p class="mb-2">
+                        <span class="badge bg-light text-dark">
+                          <%= job.required_skills %>
+                        </span>
+                      </p>
 
+                      <form method="POST" action="/student/apply/<%= job.id %>">
+                        <button class="btn btn-primary">
+                          Apply
+                        </button>
+                      </form>
 
-      <!-- APPLIED / APPROVED / CANCELLED -->
-      <% if(section === "applied" || section === "approved" || section === "cancelled") { %>
-
-        <h2 class="mb-4 fw-semibold text-capitalize"><%= section %> Internships</h2>
-
-        <% if(applications.length === 0) { %>
-          <p class="text-muted">No records found.</p>
-        <% } else { %>
-
-          <div class="row">
-            <% applications.forEach(app => { %>
-              <div class="col-md-6 mb-4">
-                <div class="card shadow-sm border-0 h-100">
-                  <div class="card-body">
-
-                    <h5 class="fw-semibold"><%= app.title %></h5>
-                    <p class="text-muted">Skills: <%= app.required_skills %></p>
-
-                    <span class="badge bg-secondary">
-                      <%= app.status %>
-                    </span>
+                    </div>
 
                   </div>
                 </div>
-              </div>
-            <% }) %>
-          </div>
 
-        <% } %>
+                <% }) %>
+            </div>
 
-      <% } %>
+            <% } %>
 
-
-      <!-- PROFILE SECTION -->
-      <% if(section === "profile") { %>
-
-        <h2 class="mb-4 fw-semibold">Edit Profile</h2>
-
-        <form action="/student/profile/save" method="POST" class="mb-5">
-
-          <div class="mb-3">
-            <label class="form-label">Full Name</label>
-            <input type="text" name="name" class="form-control"
-              value="<%= user.name %>" required>
-          </div>
-
-          <div class="mb-3">
-            <label class="form-label">Address</label>
-            <textarea name="address" class="form-control"><%= profile?.address || '' %></textarea>
-          </div>
-
-          <div class="mb-3">
-            <label class="form-label">Skills</label>
-            <input type="text" name="skills" class="form-control"
-              value="<%= profile?.skills || '' %>"
-              placeholder="HTML, CSS, JS, Node">
-          </div>
-
-          <div class="mb-3">
-            <label class="form-label">GitHub</label>
-            <input type="text" name="github" class="form-control"
-              value="<%= profile?.github || '' %>"
-              placeholder="https://github.com/username">
-          </div>
-
-          <div class="mb-3">
-            <label class="form-label">LinkedIn</label>
-            <input type="text" name="linkedin" class="form-control"
-              value="<%= profile?.linkedin || '' %>"
-              placeholder="https://linkedin.com/in/username">
-          </div>
-
-          <button class="btn btn-primary">
-            Save Profile
-          </button>
-
-        </form>
-
-      <% } %>
+              <% } %>
 
 
-      <!-- RESET PASSWORD -->
-      <% if(section === "reset") { %>
+                <!-- APPLIED / APPROVED / CANCELLED -->
+                <% if(section==="applied" || section==="approved" || section==="cancelled" ) { %>
 
-        <div class="row justify-content-center">
-          <div class="col-md-6">
+                  <h2 class="mb-4 fw-semibold text-capitalize">
+                    <%= section %> Internships
+                  </h2>
 
-            <h3 class="mb-4 fw-semibold">Reset Password</h3>
+                  <% if(applications.length===0) { %>
+                    <p class="text-muted">No records found.</p>
+                    <% } else { %>
 
-            <form method="POST" action="/student/reset-password">
+                      <div class="row">
 
-              <div class="mb-3">
-                <label class="form-label">Email</label>
-                <input type="email" class="form-control"
-                  value="<%= user.email %>" readonly>
-              </div>
+                        <% applications.forEach(app=> { %>
 
-              <div class="mb-3">
-                <label class="form-label">Current Password</label>
-                <input type="password" name="currentPassword"
-                  class="form-control" required>
-              </div>
+                          <div class="col-md-6 mb-4">
+                            <div class="card shadow-sm border-0 h-100">
 
-              <div class="mb-3">
-                <label class="form-label">New Password</label>
-                <input type="password" name="password"
-                  class="form-control" required>
-              </div>
+                              <div class="card-body">
 
-              <div class="mb-3">
-                <label class="form-label">Confirm Password</label>
-                <input type="password" name="confirmPassword"
-                  class="form-control" required>
-              </div>
+                                <h5 class="fw-semibold">
+                                  <%= app.title %>
+                                </h5>
 
-              <button class="btn btn-danger w-100">
-                Change Password
-              </button>
+                                <p class="text-muted">
+                                  Skills: <%= app.required_skills %>
+                                </p>
 
-            </form>
+                                <span class="badge bg-secondary">
+                                  <%= app.status %>
+                                </span>
 
-          </div>
-        </div>
+                              </div>
 
-      <% } %>
+                            </div>
+                          </div>
+
+                          <% }) %>
+
+                      </div>
+
+                      <% } %>
+
+                        <% } %>
+
+
+                          <!-- PROFILE SECTION -->
+                          <% if(section==="profile" ) { %>
+
+                            <h2 class="mb-4 fw-semibold">Edit Profile</h2>
+
+                            <form action="/student/profile/save" method="POST" class="mb-5">
+
+                              <div class="mb-3">
+                                <label class="form-label">Full Name</label>
+                                <input type="text" name="name" class="form-control" value="<%= user.name %>" required>
+                              </div>
+
+                              <div class="mb-3">
+                                <label class="form-label">Address</label>
+                                <textarea name="address" class="form-control"><%= profile?.address || '' %></textarea>
+                              </div>
+
+                              <div class="mb-3">
+                                <label class="form-label">Skills</label>
+                                <input type="text" name="skills" class="form-control"
+                                  value="<%= profile?.skills || '' %>" placeholder="HTML, CSS, JS, Node">
+                              </div>
+
+                              <div class="mb-3">
+                                <label class="form-label">GitHub</label>
+                                <input type="text" name="github" class="form-control"
+                                  value="<%= profile?.github || '' %>" placeholder="https://github.com/username">
+                              </div>
+
+                              <div class="mb-3">
+                                <label class="form-label">LinkedIn</label>
+                                <input type="text" name="linkedin" class="form-control"
+                                  value="<%= profile?.linkedin || '' %>" placeholder="https://linkedin.com/in/username">
+                              </div>
+
+                              <button class="btn btn-primary">
+                                Save Profile
+                              </button>
+
+                            </form>
+
+                            <% } %>
+
+
+                              <!-- RESET PASSWORD -->
+                              <% if(section==="reset" ) { %>
+
+                                <div class="row justify-content-center">
+                                  <div class="col-md-6">
+
+                                    <h3 class="mb-4 fw-semibold">Reset Password</h3>
+
+                                    <form method="POST" action="/student/reset-password">
+
+                                      <div class="mb-3">
+                                        <label class="form-label">Email</label>
+                                        <input type="email" class="form-control" value="<%= user.email %>" readonly>
+                                      </div>
+
+                                      <div class="mb-3">
+                                        <label class="form-label">Current Password</label>
+                                        <input type="password" name="currentPassword" class="form-control" required>
+                                      </div>
+
+                                      <div class="mb-3">
+                                        <label class="form-label">New Password</label>
+                                        <input type="password" name="password" class="form-control" required>
+                                      </div>
+
+                                      <div class="mb-3">
+                                        <label class="form-label">Confirm Password</label>
+                                        <input type="password" name="confirmPassword" class="form-control" required>
+                                      </div>
+
+                                      <button class="btn btn-danger w-100">
+                                        Change Password
+                                      </button>
+
+                                    </form>
+
+                                  </div>
+                                </div>
+
+                                <% } %>
 
     </div>
 

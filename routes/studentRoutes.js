@@ -13,7 +13,9 @@ function isStudent(req, res, next) {
 
 // ================= STUDENT PANEL =================
 router.get("/dashboard", isStudent, async (req, res) => {
+
     const section = req.query.section || "jobs";
+    const keyword = req.query.keyword || "";
     const userId = req.session.user.id;
 
     let internships = [];
@@ -22,16 +24,24 @@ router.get("/dashboard", isStudent, async (req, res) => {
 
     try {
 
-        // OPENING JOBS
+        // ================= OPENING JOBS =================
         if (section === "jobs") {
-            const [rows] = await db.query(
-                "SELECT * FROM internships WHERE status='open'"
-            );
+
+            let sql = "SELECT * FROM internships WHERE status='open'";
+            let params = [];
+
+            if (keyword) {
+                sql += " AND (title LIKE ? OR required_skills LIKE ?)";
+                params.push(`%${keyword}%`, `%${keyword}%`);
+            }
+
+            const [rows] = await db.query(sql, params);
             internships = rows;
         }
 
-        // APPLIED
+        // ================= APPLIED =================
         if (section === "applied") {
+
             const [rows] = await db.query(
                 `SELECT i.*, a.status
                  FROM applications a
@@ -39,11 +49,13 @@ router.get("/dashboard", isStudent, async (req, res) => {
                  WHERE a.student_id = ? AND a.status='applied'`,
                 [userId]
             );
+
             applications = rows;
         }
 
-        // APPROVED
+        // ================= APPROVED =================
         if (section === "approved") {
+
             const [rows] = await db.query(
                 `SELECT i.*, a.status
                  FROM applications a
@@ -51,11 +63,13 @@ router.get("/dashboard", isStudent, async (req, res) => {
                  WHERE a.student_id = ? AND a.status='approved'`,
                 [userId]
             );
+
             applications = rows;
         }
 
-        // CANCELLED
+        // ================= CANCELLED =================
         if (section === "cancelled") {
+
             const [rows] = await db.query(
                 `SELECT i.*, a.status
                  FROM applications a
@@ -63,11 +77,13 @@ router.get("/dashboard", isStudent, async (req, res) => {
                  WHERE a.student_id = ? AND a.status='cancelled'`,
                 [userId]
             );
+
             applications = rows;
         }
 
-        // PROFILE FETCH
+        // ================= PROFILE FETCH =================
         if (section === "profile") {
+
             const [rows] = await db.query(
                 "SELECT * FROM student_profiles WHERE user_id = ?",
                 [userId]
@@ -82,7 +98,8 @@ router.get("/dashboard", isStudent, async (req, res) => {
             section,
             internships,
             applications,
-            profile
+            profile,
+            keyword
         });
 
     } catch (error) {
@@ -94,31 +111,35 @@ router.get("/dashboard", isStudent, async (req, res) => {
 
 // ================= SAVE / UPDATE PROFILE =================
 router.post("/profile/save", isStudent, async (req, res) => {
+
     const userId = req.session.user.id;
     const { name, address, skills, github, linkedin } = req.body;
 
     try {
+
         const [existing] = await db.query(
             "SELECT * FROM student_profiles WHERE user_id = ?",
             [userId]
         );
 
         if (existing.length > 0) {
-            // UPDATE
+
             await db.query(
                 `UPDATE student_profiles
                  SET name=?, address=?, skills=?, github=?, linkedin=?
                  WHERE user_id=?`,
                 [name, address, skills, github, linkedin, userId]
             );
+
         } else {
-            // INSERT
+
             await db.query(
                 `INSERT INTO student_profiles
                  (user_id, name, address, skills, github, linkedin)
                  VALUES (?, ?, ?, ?, ?, ?)`,
                 [userId, name, address, skills, github, linkedin]
             );
+
         }
 
         req.flash("success", "Profile saved successfully");
@@ -128,15 +149,18 @@ router.post("/profile/save", isStudent, async (req, res) => {
         console.log(error);
         res.send("Profile save error");
     }
+
 });
 
 
 // ================= APPLY =================
 router.post("/apply/:id", isStudent, async (req, res) => {
+
     const internshipId = req.params.id;
     const studentId = req.session.user.id;
 
     try {
+
         await db.query(
             "INSERT IGNORE INTO applications (student_id, internship_id) VALUES (?, ?)",
             [studentId, internshipId]
@@ -148,11 +172,13 @@ router.post("/apply/:id", isStudent, async (req, res) => {
         console.log(error);
         res.send("Application error");
     }
+
 });
 
 
 // ================= RESET PASSWORD =================
 router.post("/reset-password", isStudent, async (req, res) => {
+
     const { currentPassword, password, confirmPassword } = req.body;
 
     if (password !== confirmPassword) {
@@ -161,6 +187,7 @@ router.post("/reset-password", isStudent, async (req, res) => {
     }
 
     try {
+
         const [rows] = await db.query(
             "SELECT password FROM users WHERE id = ?",
             [req.session.user.id]
@@ -183,12 +210,14 @@ router.post("/reset-password", isStudent, async (req, res) => {
         );
 
         req.flash("success", "Password updated successfully");
+
         res.redirect("/student/dashboard?section=jobs");
 
     } catch (error) {
         console.log(error);
         res.send("Password update error");
     }
+
 });
 
 module.exports = router;

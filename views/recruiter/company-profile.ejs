@@ -1,0 +1,48 @@
+<div class="container mt-5" style="max-width:700px">
+
+<h2 class="mb-4 fw-semibold">Company Profile</h2>
+
+<form method="POST" action="/recruiter/company-profile/save">
+
+<div class="mb-3">
+<label class="form-label">Company Name</label>
+<input type="text"
+name="company_name"
+class="form-control"
+value="<%= profile?.company_name || '' %>"
+required>
+</div>
+
+<div class="mb-3">
+<label class="form-label">Company Website</label>
+<input type="text"
+name="company_website"
+class="form-control"
+value="<%= profile?.company_website || '' %>"
+placeholder="https://example.com">
+</div>
+
+<div class="mb-3">
+<label class="form-label">Company Location</label>
+<input type="text"
+name="company_location"
+class="form-control"
+value="<%= profile?.company_location || '' %>"
+placeholder="Mumbai, India">
+</div>
+
+<div class="mb-3">
+<label class="form-label">Company Description</label>
+<textarea name="company_description"
+class="form-control"
+rows="4"
+placeholder="Describe your company"><%= profile?.company_description || '' %></textarea>
+</div>
+
+<button class="btn btn-primary">
+Save Profile
+</button>
+
+</form>
+
+</div>

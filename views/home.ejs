@@ -1,15 +1,79 @@
 <section class="hero text-center d-flex align-items-center">
     <div class="container">
+
         <h1 class="display-4 fw-bold fade-in">
             Connecting Skills to Opportunities
         </h1>
+
         <p class="lead mt-3 fade-in-delay">
-            Smart internship matching for students and recruiters.
+            Smart internship matching platform for students and recruiters.
         </p>
 
         <div class="mt-4 fade-in-delay-2">
-            <a href="/register" class="btn btn-primary btn-lg me-2">Get Started</a>
-            <a href="/login" class="btn btn-outline-light btn-lg">Login</a>
+            <a href="/register" class="btn btn-primary btn-lg me-2">
+                Get Started
+            </a>
+
+            <a href="/login" class="btn btn-outline-light btn-lg">
+                Login
+            </a>
         </div>
+
+    </div>
+</section>
+
+<!-- INTERNSHIP PREVIEW SECTION -->
+<section class="py-5 bg-light container mt-5 mb-5">
+    <div class="container">
+
+        <h2 class="text-center mb-5 fw-bold">Latest Internships</h2>
+
+        <div class="row">
+
+            <% internships.forEach(job=> { %>
+
+                <div class="col-md-4 mb-4">
+                    <div class="card shadow-sm border-0 h-100">
+                        <div class="card-body">
+
+                            <h5 class="fw-semibold">
+                                <%= job.title %>
+                            </h5>
+
+                            <p class="mb-2">
+                                <span class="badge bg-light text-dark">
+                                    <%= job.required_skills %>
+                                </span>
+                            </p>
+
+                            <% if(user) { %>
+
+                                <form method="POST" action="/student/apply/<%= job.id %>">
+                                    <button class="btn btn-primary">
+                                        Apply
+                                    </button>
+                                </form>
+
+                                <% } else { %>
+
+                                    <a href="/login" class="btn btn-outline-primary">
+                                        Apply
+                                    </a>
+
+                                    <% } %>
+
+                        </div>
+                    </div>
+                </div>
+
+                <% }) %>
+
+        </div>
+
+    </div>
+    <div class="text-center mt-4">
+        <a href="/login" class="btn btn-primary btn-lg">
+            View All Internships
+        </a>
     </div>
 </section>

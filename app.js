@@ -4,6 +4,8 @@ const path = require("path");
 const session = require("express-session");
 const flash = require("connect-flash");
 
+const db = require("./config/db");
+
 const authRoutes = require("./routes/authRoutes");
 const studentRoutes = require("./routes/studentRoutes");
 const recruiterRoutes = require("./routes/recruiterRoutes");
@@ -47,8 +49,24 @@ app.use("/student", studentRoutes);
 app.use("/recruiter", recruiterRoutes);
 
 // ================= HOME =================
-app.get("/", (req, res) => {
-    res.render("home");
+app.get("/", async (req, res) => {
+
+    try {
+
+        const [internships] = await db.query(
+            "SELECT * FROM internships WHERE status='open' LIMIT 3"
+        );
+
+        res.render("home", { internships });
+
+    } catch (error) {
+
+        console.log(error);
+
+        res.render("home", { internships: [] });
+
+    }
+
 });
 
 // ================= SERVER =================

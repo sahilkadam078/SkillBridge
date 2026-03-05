@@ -3,10 +3,16 @@
 
     <!-- LEFT SIDE -->
     <div class="col-md-3 bg-light border-end p-4">
+
       <h5 class="fw-bold mb-4">Recruiter Panel</h5>
 
-      <a href="/recruiter/dashboard"
-        class="nav-link text-primary fw-bold mb-2">
+      <a href="/recruiter/dashboard?section=add"
+        class="nav-link mb-2 <%= section === 'add' ? 'text-primary fw-bold' : 'text-dark' %>">
+        Add Internship
+      </a>
+
+      <a href="/recruiter/dashboard?section=my"
+        class="nav-link mb-2 <%= section === 'my' ? 'text-primary fw-bold' : 'text-dark' %>">
         My Internships
       </a>
 
@@ -16,65 +22,83 @@
     <!-- RIGHT SIDE -->
     <div class="col-md-9 p-5">
 
-      <h2 class="mb-4 fw-semibold">Add Internship</h2>
+      <!-- ADD INTERNSHIP SECTION -->
+      <% if(section==="add" ) { %>
 
-      <!-- ADD INTERNSHIP FORM -->
-      <div class="card shadow-sm border-0 mb-5">
-        <div class="card-body">
+        <h2 class="mb-4 fw-semibold">Add Internship</h2>
 
-          <form method="POST" action="/recruiter/add">
+        <div class="card shadow-sm border-0">
+          <div class="card-body">
 
-            <div class="mb-3">
-              <label class="form-label">Internship Title</label>
-              <input type="text" name="title" class="form-control" required>
-            </div>
+            <form method="POST" action="/recruiter/add">
 
-            <div class="mb-3">
-              <label class="form-label">Description</label>
-              <textarea name="description" class="form-control" rows="3"></textarea>
-            </div>
+              <!-- ROLE -->
+              <div class="mb-3">
+                <label class="form-label">Role</label>
+                <input type="text" name="title" class="form-control" placeholder="e.g. MERN Stack Developer" required>
+              </div>
 
-            <div class="mb-3">
-              <label class="form-label">Required Skills</label>
-              <input type="text" name="required_skills"
-                class="form-control"
-                placeholder="HTML, CSS, JS">
-            </div>
+              <!-- DESCRIPTION -->
+              <div class="mb-3">
+                <label class="form-label">Description</label>
+                <textarea name="description" class="form-control" rows="3" placeholder="Describe the internship work"
+                  required>
+                </textarea>
+              </div>
 
-            <button class="btn btn-primary">
-              Add Internship
-            </button>
+              <!-- REQUIRED SKILLS -->
+              <div class="mb-3">
+                <label class="form-label">Required Skills</label>
+                <input type="text" name="required_skills" class="form-control"
+                  placeholder="e.g. JavaScript, React, Node.js" required>
+              </div>
 
-          </form>
+              <button class="btn btn-primary">
+                Add Internship
+              </button>
 
-        </div>
-      </div>
+            </form>
 
-
-      <!-- MY INTERNSHIPS -->
-      <h4 class="mb-3">My Internships</h4>
-
-      <% if(internships.length === 0) { %>
-        <p class="text-muted">No internships added yet.</p>
-      <% } else { %>
-
-        <% internships.forEach(job => { %>
-          <div class="card shadow-sm border-0 mb-3">
-            <div class="card-body">
-
-              <h5 class="fw-semibold"><%= job.title %></h5>
-              <p class="text-muted"><%= job.required_skills %></p>
-
-              <a href="/recruiter/applicants/<%= job.id %>"
-                class="btn btn-outline-primary btn-sm">
-                View Applicants
-              </a>
-
-            </div>
           </div>
-        <% }) %>
+        </div>
 
-      <% } %>
+        <% } %>
+
+
+          <!-- MY INTERNSHIPS SECTION -->
+          <% if(section==="my" ) { %>
+
+            <h2 class="mb-4 fw-semibold">My Internships</h2>
+
+            <% if(internships.length===0) { %>
+              <p class="text-muted">No internships added yet.</p>
+              <% } else { %>
+
+                <% internships.forEach(job=> { %>
+
+                  <div class="card shadow-sm border-0 mb-3">
+                    <div class="card-body">
+
+                      <h5 class="fw-semibold">
+                        <%= job.title %>
+                      </h5>
+
+                      <p class="text-muted">
+                        <%= job.required_skills %>
+                      </p>
+
+                      <a href="/recruiter/applicants/<%= job.id %>" class="btn btn-outline-primary btn-sm">
+                        View Applicants
+                      </a>
+
+                    </div>
+                  </div>
+
+                  <% }) %>
+
+                    <% } %>
+
+                      <% } %>
 
     </div>
 
