@@ -3,6 +3,7 @@
 <h2 class="mb-4 fw-semibold">Company Profile</h2>
 
 <form method="POST" action="/recruiter/company-profile/save">
+<input type="hidden" name="_csrf" value="<%= csrfToken %>">
 
 <div class="mb-3">
 <label class="form-label">Company Name</label>

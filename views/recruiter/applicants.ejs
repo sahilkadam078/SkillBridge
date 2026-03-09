@@ -19,6 +19,7 @@
 
           <form method="POST"
             action="/recruiter/application/<%= app.application_id %>">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
 
             <button name="status"
                     value="approved"

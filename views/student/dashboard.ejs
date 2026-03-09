@@ -1,238 +1,306 @@
 <div class="container-fluid" style="min-height:85vh;">
-  <div class="row h-100">
+<div class="row h-100">
 
-    <!-- SIDEBAR -->
-    <div class="col-md-3 bg-light border-end d-flex flex-column p-4">
+<!-- SIDEBAR -->
+<div class="col-md-3 bg-light border-end d-flex flex-column p-4">
 
-      <h5 class="fw-bold mb-4">Student Panel</h5>
+<h5 class="fw-bold mb-4">Student Panel</h5>
 
-      <a href="/student/dashboard?section=jobs"
-        class="nav-link mb-2 <%= section === 'jobs' ? 'text-primary fw-bold' : 'text-dark' %>">
-        Opening Jobs
-      </a>
+<a href="/student/dashboard?section=jobs"
+class="nav-link mb-2 <%= section === 'jobs' ? 'text-primary fw-bold' : 'text-dark' %>">
+Opening Jobs
+</a>
 
-      <a href="/student/dashboard?section=applied"
-        class="nav-link mb-2 <%= section === 'applied' ? 'text-primary fw-bold' : 'text-dark' %>">
-        Applied Internships
-      </a>
+<a href="/student/dashboard?section=applied"
+class="nav-link mb-2 <%= section === 'applied' ? 'text-primary fw-bold' : 'text-dark' %>">
+Applied Internships
+</a>
 
-      <a href="/student/dashboard?section=approved"
-        class="nav-link mb-2 <%= section === 'approved' ? 'text-primary fw-bold' : 'text-dark' %>">
-        Approved
-      </a>
+<a href="/student/dashboard?section=approved"
+class="nav-link mb-2 <%= section === 'approved' ? 'text-primary fw-bold' : 'text-dark' %>">
+Approved
+</a>
 
-      <a href="/student/dashboard?section=cancelled"
-        class="nav-link mb-2 <%= section === 'cancelled' ? 'text-primary fw-bold' : 'text-dark' %>">
-        Cancelled
-      </a>
+<a href="/student/dashboard?section=cancelled"
+class="nav-link mb-2 <%= section === 'cancelled' ? 'text-primary fw-bold' : 'text-dark' %>">
+Cancelled
+</a>
 
-      <a href="/student/dashboard?section=reset"
-        class="nav-link mb-2 <%= section === 'reset' ? 'text-primary fw-bold' : 'text-dark' %>">
-        Reset Password
-      </a>
+<a href="/student/dashboard?section=reset"
+class="nav-link mb-2 <%= section === 'reset' ? 'text-primary fw-bold' : 'text-dark' %>">
+Reset Password
+</a>
 
-      <!-- FILTER SECTION -->
-      <hr class="mt-4">
+<hr class="mt-4">
 
-      <h6 class="fw-bold mt-2">Search Internships</h6>
+<h6 class="fw-bold mt-2">Search Internships</h6>
 
-      <form method="GET" action="/student/dashboard">
+<form method="GET" action="/student/dashboard">
+<input type="hidden" name="section" value="jobs">
 
-        <input type="hidden" name="section" value="jobs">
+<div class="mb-2">
+<input type="text"
+name="keyword"
+class="form-control form-control-sm"
+placeholder="Search by skill or role">
+</div>
 
-        <div class="mb-2">
-          <input type="text" name="keyword" class="form-control form-control-sm" placeholder="Search by skill or role">
-        </div>
+<button class="btn btn-sm btn-primary w-100">
+Search
+</button>
+</form>
 
-        <button class="btn btn-sm btn-primary w-100">
-          Search
-        </button>
+</div>
 
-      </form>
 
-    </div>
+<!-- MAIN CONTENT -->
+<div class="col-md-9 p-5">
 
-    <!-- MAIN CONTENT -->
-    <div class="col-md-9 p-5">
 
-      <!-- OPENING JOBS -->
-      <% if(section==="jobs" ) { %>
+<!-- OPENING JOBS -->
+<% if(section === "jobs") { %>
 
-        <h2 class="mb-4 fw-semibold">Opening Jobs</h2>
+<h2 class="mb-4 fw-semibold">Opening Jobs</h2>
 
-        <% if(internships.length===0) { %>
-          <p class="text-muted">No internships available.</p>
-          <% } else { %>
+<% if(internships.length === 0) { %>
 
-            <div class="row">
-              <% internships.forEach(job=> { %>
+<p class="text-muted">No internships available.</p>
 
-                <div class="col-md-6 mb-4">
-                  <div class="card shadow-sm border-0 h-100">
+<% } else { %>
 
-                    <div class="card-body">
+<div class="row">
 
-                      <h5 class="fw-semibold">
-                        <%= job.title %>
-                      </h5>
+<% internships.forEach(job => { %>
 
-                      <p class="mb-2">
-                        <span class="badge bg-light text-dark">
-                          <%= job.required_skills %>
-                        </span>
-                      </p>
+<div class="col-lg-6 mb-4">
 
-                      <form method="POST" action="/student/apply/<%= job.id %>">
-                        <button class="btn btn-primary">
-                          Apply
-                        </button>
-                      </form>
+<div class="card shadow-sm border-0 h-100">
 
-                    </div>
+<div class="card-body">
 
-                  </div>
-                </div>
+<h5 class="fw-semibold mb-1">
+<%= job.title %>
+</h5>
 
-                <% }) %>
-            </div>
+<p class="text-muted small mb-2">
+<%= job.company_name || "Company" %>
+</p>
 
-            <% } %>
+<p class="text-muted small mb-3">
+<%= job.description %>
+</p>
 
-              <% } %>
+<p class="mb-1">
+<strong>Skills:</strong>
+<%= job.required_skills %>
+</p>
 
+<p class="mb-3">
+<strong>Experience:</strong>
+<%= job.min_experience || "Fresher" %>
+</p>
 
-                <!-- APPLIED / APPROVED / CANCELLED -->
-                <% if(section==="applied" || section==="approved" || section==="cancelled" ) { %>
+<form method="POST" action="/student/apply/<%= job.id %>">
+<input type="hidden" name="_csrf" value="<%= csrfToken %>">
+<button class="btn btn-primary btn-sm">
+Apply
+</button>
+</form>
 
-                  <h2 class="mb-4 fw-semibold text-capitalize">
-                    <%= section %> Internships
-                  </h2>
+</div>
+</div>
+</div>
 
-                  <% if(applications.length===0) { %>
-                    <p class="text-muted">No records found.</p>
-                    <% } else { %>
+<% }) %>
 
-                      <div class="row">
+</div>
 
-                        <% applications.forEach(app=> { %>
+<% } %>
 
-                          <div class="col-md-6 mb-4">
-                            <div class="card shadow-sm border-0 h-100">
+<% } %>
 
-                              <div class="card-body">
 
-                                <h5 class="fw-semibold">
-                                  <%= app.title %>
-                                </h5>
 
-                                <p class="text-muted">
-                                  Skills: <%= app.required_skills %>
-                                </p>
+<!-- APPLIED / APPROVED / CANCELLED -->
+<% if(section === "applied" || section === "approved" || section === "cancelled") { %>
 
-                                <span class="badge bg-secondary">
-                                  <%= app.status %>
-                                </span>
+<h2 class="mb-4 fw-semibold text-capitalize">
+<%= section %> Internships
+</h2>
 
-                              </div>
+<% if(applications.length === 0) { %>
 
-                            </div>
-                          </div>
+<p class="text-muted">No records found.</p>
 
-                          <% }) %>
+<% } else { %>
 
-                      </div>
+<div class="row">
 
-                      <% } %>
+<% applications.forEach(app => { %>
 
-                        <% } %>
+<div class="col-lg-6 mb-4">
 
+<div class="card shadow-sm border-0 h-100">
 
-                          <!-- PROFILE SECTION -->
-                          <% if(section==="profile" ) { %>
+<div class="card-body">
 
-                            <h2 class="mb-4 fw-semibold">Edit Profile</h2>
+<h5 class="fw-semibold mb-1">
+<%= app.title %>
+</h5>
 
-                            <form action="/student/profile/save" method="POST" class="mb-5">
+<p class="text-muted small mb-2">
+<%= app.company_name || "Company" %>
+</p>
 
-                              <div class="mb-3">
-                                <label class="form-label">Full Name</label>
-                                <input type="text" name="name" class="form-control" value="<%= user.name %>" required>
-                              </div>
+<p class="mb-1">
+<strong>Skills:</strong>
+<%= app.required_skills %>
+</p>
 
-                              <div class="mb-3">
-                                <label class="form-label">Address</label>
-                                <textarea name="address" class="form-control"><%= profile?.address || '' %></textarea>
-                              </div>
+<p class="mb-3">
+<strong>Experience:</strong>
+<%= app.min_experience || "Fresher" %>
+</p>
 
-                              <div class="mb-3">
-                                <label class="form-label">Skills</label>
-                                <input type="text" name="skills" class="form-control"
-                                  value="<%= profile?.skills || '' %>" placeholder="HTML, CSS, JS, Node">
-                              </div>
+<span class="badge 
+<%= app.status === 'approved' ? 'bg-success' :
+app.status === 'cancelled' ? 'bg-danger' :
+'bg-secondary' %>">
 
-                              <div class="mb-3">
-                                <label class="form-label">GitHub</label>
-                                <input type="text" name="github" class="form-control"
-                                  value="<%= profile?.github || '' %>" placeholder="https://github.com/username">
-                              </div>
+<%= app.status %>
 
-                              <div class="mb-3">
-                                <label class="form-label">LinkedIn</label>
-                                <input type="text" name="linkedin" class="form-control"
-                                  value="<%= profile?.linkedin || '' %>" placeholder="https://linkedin.com/in/username">
-                              </div>
+</span>
 
-                              <button class="btn btn-primary">
-                                Save Profile
-                              </button>
+</div>
+</div>
+</div>
 
-                            </form>
+<% }) %>
 
-                            <% } %>
+</div>
 
+<% } %>
 
-                              <!-- RESET PASSWORD -->
-                              <% if(section==="reset" ) { %>
+<% } %>
 
-                                <div class="row justify-content-center">
-                                  <div class="col-md-6">
 
-                                    <h3 class="mb-4 fw-semibold">Reset Password</h3>
 
-                                    <form method="POST" action="/student/reset-password">
+<!-- PROFILE -->
+<% if(section === "profile") { %>
 
-                                      <div class="mb-3">
-                                        <label class="form-label">Email</label>
-                                        <input type="email" class="form-control" value="<%= user.email %>" readonly>
-                                      </div>
+<h2 class="mb-4 fw-semibold">Edit Profile</h2>
 
-                                      <div class="mb-3">
-                                        <label class="form-label">Current Password</label>
-                                        <input type="password" name="currentPassword" class="form-control" required>
-                                      </div>
+<form action="/student/profile/save" method="POST" class="mb-5">
+<input type="hidden" name="_csrf" value="<%= csrfToken %>">
 
-                                      <div class="mb-3">
-                                        <label class="form-label">New Password</label>
-                                        <input type="password" name="password" class="form-control" required>
-                                      </div>
+<div class="mb-3">
+<label class="form-label">Full Name</label>
+<input type="text"
+name="name"
+class="form-control"
+value="<%= user.name %>"
+required>
+</div>
 
-                                      <div class="mb-3">
-                                        <label class="form-label">Confirm Password</label>
-                                        <input type="password" name="confirmPassword" class="form-control" required>
-                                      </div>
+<div class="mb-3">
+<label class="form-label">Address</label>
+<textarea name="address"
+class="form-control"><%= profile?.address || '' %></textarea>
+</div>
 
-                                      <button class="btn btn-danger w-100">
-                                        Change Password
-                                      </button>
+<div class="mb-3">
+<label class="form-label">Skills</label>
+<input type="text"
+name="skills"
+class="form-control"
+value="<%= profile?.skills || '' %>"
+placeholder="HTML, CSS, JS, Node">
+</div>
 
-                                    </form>
+<div class="mb-3">
+<label class="form-label">GitHub</label>
+<input type="text"
+name="github"
+class="form-control"
+value="<%= profile?.github || '' %>"
+placeholder="https://github.com/username">
+</div>
 
-                                  </div>
-                                </div>
+<div class="mb-3">
+<label class="form-label">LinkedIn</label>
+<input type="text"
+name="linkedin"
+class="form-control"
+value="<%= profile?.linkedin || '' %>"
+placeholder="https://linkedin.com/in/username">
+</div>
 
-                                <% } %>
+<button class="btn btn-primary">
+Save Profile
+</button>
 
-    </div>
+</form>
 
-  </div>
+<% } %>
+
+
+
+<!-- RESET PASSWORD -->
+<% if(section === "reset") { %>
+
+<div class="row justify-content-center">
+
+<div class="col-md-6">
+
+<h3 class="mb-4 fw-semibold">Reset Password</h3>
+
+<form method="POST" action="/student/reset-password">
+<input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+<div class="mb-3">
+<label class="form-label">Email</label>
+<input type="email"
+class="form-control"
+value="<%= user.email %>"
+readonly>
+</div>
+
+<div class="mb-3">
+<label class="form-label">Current Password</label>
+<input type="password"
+name="currentPassword"
+class="form-control"
+required>
+</div>
+
+<div class="mb-3">
+<label class="form-label">New Password</label>
+<input type="password"
+name="password"
+class="form-control"
+required>
+</div>
+
+<div class="mb-3">
+<label class="form-label">Confirm Password</label>
+<input type="password"
+name="confirmPassword"
+class="form-control"
+required>
+</div>
+
+<button class="btn btn-danger w-100">
+Change Password
+</button>
+
+</form>
+
+</div>
+</div>
+
+<% } %>
+
+
+</div>
+</div>
 </div>

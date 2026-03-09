@@ -1,27 +1,34 @@
-const db = require("../config/db");
-const bcrypt = require("bcrypt");
+const authService = require("../services/authService");
+
+exports.showRegisterPage = (req, res) => {
+    res.render("register");
+};
+
+exports.showLoginPage = (req, res) => {
+    res.render("login");
+};
+
+exports.showForgotPasswordPage = (req, res) => {
+    res.render("forgot-password");
+};
+
+exports.handleForgotPassword = (req, res) => {
+    res.send("Forgot password feature coming soon");
+};
 
 // ================= REGISTER =================
 exports.registerUser = async (req, res) => {
     const { name, email, password, role } = req.body;
 
     try {
-        const [existing] = await db.query(
-            "SELECT * FROM users WHERE email = ?",
-            [email]
-        );
+        const existingUser = await authService.findUserByEmail(email);
 
-        if (existing.length > 0) {
+        if (existingUser) {
             req.flash("error", "Email already exists");
             return res.redirect("/register");
         }
 
-        const hashedPassword = await bcrypt.hash(password, 10);
-
-        await db.query(
-            "INSERT INTO users (name, email, password, role) VALUES (?, ?, ?, ?)",
-            [name, email, hashedPassword, role]
-        );
+        await authService.createUser({ name, email, password, role });
 
         req.flash("success", "Registration successful! Please login.");
         res.redirect("/login");
@@ -37,21 +44,8 @@ exports.loginUser = async (req, res) => {
     const { email, password } = req.body;
 
     try {
-        const [rows] = await db.query(
-            "SELECT * FROM users WHERE email = ?",
-            [email]
-        );
-
-        if (rows.length === 0) {
-            req.flash("error", "Invalid email or password");
-            return res.redirect("/login");
-        }
-
-        const user = rows[0];
-
-        const isMatch = await bcrypt.compare(password, user.password);
-
-        if (!isMatch) {
+        const user = await authService.verifyUserCredentials(email, password);
+        if (!user) {
             req.flash("error", "Invalid email or password");
             return res.redirect("/login");
         }

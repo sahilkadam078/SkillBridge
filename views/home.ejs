@@ -22,58 +22,72 @@
     </div>
 </section>
 
-<!-- INTERNSHIP PREVIEW SECTION -->
-<section class="py-5 bg-light container mt-5 mb-5">
-    <div class="container">
 
-        <h2 class="text-center mb-5 fw-bold">Latest Internships</h2>
 
-        <div class="row">
+<!-- INTERNSHIPS SECTION -->
+<section class="py-5 bg-light">
 
-            <% internships.forEach(job=> { %>
+<div class="container">
 
-                <div class="col-md-4 mb-4">
-                    <div class="card shadow-sm border-0 h-100">
-                        <div class="card-body">
+<h2 class="text-center mb-5 fw-bold">
+Latest Internships
+</h2>
 
-                            <h5 class="fw-semibold">
-                                <%= job.title %>
-                            </h5>
+<div class="row">
 
-                            <p class="mb-2">
-                                <span class="badge bg-light text-dark">
-                                    <%= job.required_skills %>
-                                </span>
-                            </p>
+<% internships.forEach(job => { %>
 
-                            <% if(user) { %>
+<div class="col-lg-4 col-md-6 mb-4">
 
-                                <form method="POST" action="/student/apply/<%= job.id %>">
-                                    <button class="btn btn-primary">
-                                        Apply
-                                    </button>
-                                </form>
+<div class="card shadow-sm border-0 h-100">
 
-                                <% } else { %>
+<div class="card-body">
 
-                                    <a href="/login" class="btn btn-outline-primary">
-                                        Apply
-                                    </a>
+<h5 class="fw-semibold">
+<%= job.title %>
+</h5>
 
-                                    <% } %>
+<p class="text-muted small mb-2">
+<%= job.description %>
+</p>
 
-                        </div>
-                    </div>
-                </div>
+<p class="mb-1">
+<strong>Skills:</strong>
+<%= job.required_skills %>
+</p>
 
-                <% }) %>
+<p class="mb-3">
+<strong>Experience:</strong>
+<%= job.min_experience || "Fresher" %>
+</p>
 
-        </div>
+<% if(user) { %>
 
-    </div>
-    <div class="text-center mt-4">
-        <a href="/login" class="btn btn-primary btn-lg">
-            View All Internships
-        </a>
-    </div>
+<form method="POST" action="/student/apply/<%= job.id %>">
+<input type="hidden" name="_csrf" value="<%= csrfToken %>">
+<button class="btn btn-primary btn-sm">
+Apply
+</button>
+</form>
+
+<% } else { %>
+
+<a href="/login" class="btn btn-outline-primary btn-sm">
+Apply
+</a>
+
+<% } %>
+
+</div>
+
+</div>
+
+</div>
+
+<% }) %>
+
+</div>
+
+</div>
+
 </section>

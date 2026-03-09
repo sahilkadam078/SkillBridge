@@ -1,0 +1,57 @@
+<div class="container mt-5" style="max-width: 800px;">
+  <h2 class="mb-4 fw-semibold">Edit Internship</h2>
+
+  <div class="card shadow-sm border-0">
+    <div class="card-body">
+      <form method="POST" action="/recruiter/edit/<%= internship.id %>">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+        <div class="mb-3">
+          <label class="form-label">Role</label>
+          <input
+            type="text"
+            name="title"
+            class="form-control"
+            value="<%= internship.title || '' %>"
+            required
+          >
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Description</label>
+          <textarea
+            name="description"
+            class="form-control"
+            rows="4"
+          ><%= internship.description || '' %></textarea>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Required Skills</label>
+          <input
+            type="text"
+            name="required_skills"
+            class="form-control"
+            value="<%= internship.required_skills || '' %>"
+          >
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Minimum Experience</label>
+          <input
+            type="text"
+            name="min_experience"
+            class="form-control"
+            value="<%= internship.min_experience || '' %>"
+            placeholder="Fresher / 1 year"
+          >
+        </div>
+
+        <div class="d-flex gap-2">
+          <button class="btn btn-primary">Save Changes</button>
+          <a href="/recruiter/dashboard?section=my" class="btn btn-outline-secondary">Cancel</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
