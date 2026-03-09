@@ -1,192 +1,163 @@
-🎓 SkillBridge – Internship Portal Web Application
+# 🎓 SkillBridge – Internship Portal Web Application
 
-SkillBridge is a full-stack internship portal that connects students with recruiters.
+SkillBridge is a full-stack internship portal that connects **students with recruiters**.
 
 Students can explore internships and apply for them, while recruiters can post internships and manage applicants through a dedicated dashboard.
 
-The platform demonstrates role-based authentication, internship management, and application tracking.
+The platform demonstrates **role-based authentication, internship management, and application tracking**.
 
-🚀 Live Demo
+---
+
+## 🚀 Live Demo
 
 (Add deployment link after hosting)
 
-Example
-
+Example:  
 https://skillbridge-demo.com
-🛠 Tech Stack
-Frontend
 
-EJS
+---
 
-Bootstrap
+## 🛠 Tech Stack
 
-HTML
+### Frontend
+- EJS
+- Bootstrap
+- HTML
+- CSS
+- JavaScript
 
-CSS
+### Backend
+- Node.js
+- Express.js
 
-JavaScript
+### Database
+- MySQL
+- mysql2
 
-Backend
+### Authentication & Security
+- Express Sessions
+- bcrypt
+- Input Validation
+- Role-based Authorization
 
-Node.js
+### Other Tools
+- dotenv
+- connect-flash
+- Nodemon
 
-Express.js
+---
 
-Database
+## ✨ Features
 
-MySQL
+### 👨‍🎓 Student Features
+- Student Registration & Login
+- Browse available internships
+- Search internships by role/skill
+- Apply for internships
+- View applied internships
+- Track application status:
+  - Applied
+  - Approved
+  - Cancelled
+- Update student profile
+- Reset password
 
-mysql2
+### 🏢 Recruiter Features
+- Recruiter Login
+- Add new internships
+- View posted internships
+- View applicants for each internship
+- Approve or reject applications
+- Manage company profile
 
-Authentication & Security
+---
 
-Express Sessions
+## 🧠 What I Learned
 
-bcrypt
+- Building a **role-based authentication system**
+- Implementing **MVC architecture**
+- Designing a **relational database schema**
+- Managing **sessions and authentication**
+- Implementing **secure environment variables**
+- Handling **student-recruiter interaction workflows**
 
-Input Validation
+---
 
-Role-based Authorization
-
-Other Tools
-
-dotenv
-
-connect-flash
-
-Nodemon
-
-✨ Features
-👨‍🎓 Student Features
-
-Student Registration & Login
-
-Browse available internships
-
-Search internships by role/skill
-
-Apply for internships
-
-View applied internships
-
-Track application status:
-
-Applied
-
-Approved
-
-Cancelled
-
-Update student profile
-
-Reset password
-
-🏢 Recruiter Features
-
-Recruiter Login
-
-Add new internships
-
-View posted internships
-
-View applicants for each internship
-
-Approve or reject applications
-
-Manage company profile
-
-🧠 What I Learned
-
-Building a role-based authentication system
-
-Implementing MVC architecture
-
-Designing a relational database schema
-
-Managing sessions and authentication
-
-Implementing secure environment variables
-
-Handling student-recruiter interaction workflows
-
-📂 Project Structure
+## 📂 Project Structure
 SkillBridge/
 │
 ├── config/
-│   └── db.js
+│ └── db.js
 │
 ├── controllers/
-│   ├── authController.js
-│   ├── studentController.js
-│   ├── recruiterController.js
-│   └── homeController.js
+│ ├── authController.js
+│ ├── studentController.js
+│ ├── recruiterController.js
+│ └── homeController.js
 │
 ├── middleware/
-│   ├── roleMiddleware.js
-│   └── validators.js
+│ ├── roleMiddleware.js
+│ └── validators.js
 │
 ├── routes/
-│   ├── authRoutes.js
-│   ├── studentRoutes.js
-│   ├── recruiterRoutes.js
-│   └── homeRoutes.js
+│ ├── authRoutes.js
+│ ├── studentRoutes.js
+│ ├── recruiterRoutes.js
+│ └── homeRoutes.js
 │
 ├── services/
-│   ├── authService.js
-│   ├── studentService.js
-│   ├── recruiterService.js
-│   └── homeService.js
+│ ├── authService.js
+│ ├── studentService.js
+│ ├── recruiterService.js
+│ └── homeService.js
 │
 ├── views/
-│   ├── student/
-│   ├── recruiter/
-│   ├── login.ejs
-│   ├── register.ejs
-│   └── home.ejs
+│ ├── student/
+│ ├── recruiter/
+│ ├── login.ejs
+│ ├── register.ejs
+│ └── home.ejs
 │
 ├── .env
 ├── app.js
 ├── package.json
 └── README.md
-⚙️ Installation & Setup
-1️⃣ Clone the repository
+
+
+---
+
+## ⚙️ Installation & Setup
+
+### 1️⃣ Clone the repository
+
+```bash
 git clone https://github.com/yourusername/SkillBridge.git
 cd SkillBridge
-2️⃣ Install dependencies
+
+---
+
+### 2️⃣ Install dependencies
+
 npm install
-3️⃣ Create .env file
+
+---
+
+### 3️⃣ Create .env file
+
 DB_HOST=localhost
 DB_USER=root
 DB_PASSWORD=yourpassword
 DB_NAME=skillbridge
 SESSION_SECRET=your_secret_key
 PORT=3000
-4️⃣ Start the server
+
+---
+
+### 4️⃣ Start the server
+
 nodemon app.js
 
-Open in browser:
-
-http://localhost:3000
-👥 Demo Accounts
-Student
-Email: sahilgadam@gmail.com
-Password: ********
-Recruiter
-Email: nitin@gmail.com
-Password: ********
-📌 Future Improvements
-
-Resume upload feature
-
-Internship filters
-
-Email notifications
-
-Admin dashboard
-
-Internship recommendations
-
-Mobile responsive UI improvements
+---
 
 👨‍💻 Author
 
@@ -194,10 +165,8 @@ Sahil Vijay Kadam
 BSc Computer Science Student
 Aspiring Full-Stack Developer
 
-GitHub
-
+GitHub:
 https://github.com/yourusername
 
-LinkedIn
-
+LinkedIn:
 (Add your LinkedIn link)
