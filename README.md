@@ -134,32 +134,39 @@ SkillBridge/
 git clone https://github.com/yourusername/SkillBridge.git
 cd SkillBridge
 
+```
 
 ### 2️⃣ Install dependencies
 
+```
 npm install
+```
 
 ### 3️⃣ Create .env file
 
+```
 DB_HOST=localhost
 DB_USER=root
 DB_PASSWORD=yourpassword
 DB_NAME=skillbridge
 SESSION_SECRET=your_secret_key
 PORT=3000
+```
 
 ### 4️⃣ Start the server
 
+```
 nodemon app.js
+```
 
-👨‍💻 Author
+## 👨‍💻 Author
 
 Sahil Vijay Kadam
 BSc Computer Science Student
 Aspiring Full-Stack Developer
 
 GitHub:
-https://github.com/yourusername
+https://github.com/sahilkadam078
 
 LinkedIn:
-(Add your LinkedIn link)
+www.linkedin.com/in/sahil-kadam-dev
