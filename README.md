@@ -134,13 +134,10 @@ SkillBridge/
 git clone https://github.com/yourusername/SkillBridge.git
 cd SkillBridge
 
----
 
 ### 2️⃣ Install dependencies
 
 npm install
-
----
 
 ### 3️⃣ Create .env file
 
@@ -151,13 +148,9 @@ DB_NAME=skillbridge
 SESSION_SECRET=your_secret_key
 PORT=3000
 
----
-
 ### 4️⃣ Start the server
 
 nodemon app.js
-
----
 
 👨‍💻 Author
 
