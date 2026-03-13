@@ -13,12 +13,17 @@ const studentRoutes = require("./routes/studentRoutes");
 const recruiterRoutes = require("./routes/recruiterRoutes");
 
 const app = express();
+
 const isProduction = process.env.NODE_ENV === "production";
 const sessionSecret = process.env.SESSION_SECRET;
 
 if (!sessionSecret) {
     throw new Error("Missing required environment variable: SESSION_SECRET");
 }
+
+
+// ================= TRUST PROXY (IMPORTANT FOR RENDER) =================
+app.set("trust proxy", 1);
 
 
 // ================= BODY PARSER =================
@@ -34,12 +39,17 @@ app.use(session({
     cookie: {
         httpOnly: true,
         sameSite: "lax",
-        secure: isProduction
+        secure: false   // keep false for Render
     }
 }));
 
+
 app.use(flash());
-app.use(csrf());
+
+
+// ================= CSRF =================
+const csrfProtection = csrf();
+app.use(csrfProtection);
 
 
 // ================= GLOBAL LOCALS =================
@@ -77,6 +87,7 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });
+
 
 // ================= CSRF ERROR HANDLER =================
 app.use((err, req, res, next) => {
