@@ -9,37 +9,42 @@ for (const key of requiredEnv) {
   }
 }
 
-const pool = mysql.createPool({
-  host: process.env.DB_HOST,
-  port: Number(process.env.DB_PORT),
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME,
+let connection;
 
-  waitForConnections: true,
-  connectionLimit: 10,
-  queueLimit: 0,
+async function connectDB() {
+  try {
+    connection = await mysql.createConnection({
+      host: process.env.DB_HOST,
+      port: Number(process.env.DB_PORT),
+      user: process.env.DB_USER,
+      password: process.env.DB_PASSWORD,
+      database: process.env.DB_NAME,
+      connectTimeout: 10000
+    });
 
-  enableKeepAlive: true,
-  keepAliveInitialDelay: 0
-});
+    console.log("✅ MySQL connected");
 
-// Helper query wrapper to auto-reconnect if Railway drops connection
+  } catch (err) {
+    console.error("❌ MySQL connection failed. Retrying...");
+    setTimeout(connectDB, 5000);
+  }
+}
+
 async function query(sql, params) {
   try {
-    const [rows] = await pool.query(sql, params);
+    const [rows] = await connection.execute(sql, params);
     return rows;
   } catch (err) {
     if (err.code === "PROTOCOL_CONNECTION_LOST") {
-      console.log("Reconnecting to MySQL...");
-      const [rows] = await pool.query(sql, params);
+      console.log("⚠️ Connection lost. Reconnecting...");
+      await connectDB();
+      const [rows] = await connection.execute(sql, params);
       return rows;
     }
     throw err;
   }
 }
 
-module.exports = {
-  query,
-  pool
-};
+connectDB();
+
+module.exports = { query };
