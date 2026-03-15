@@ -1,7 +1,6 @@
 const mysql = require("mysql2/promise");
 require("dotenv").config();
 
-// Required environment variables
 const requiredEnv = ["DB_HOST", "DB_PORT", "DB_USER", "DB_PASSWORD", "DB_NAME"];
 
 for (const key of requiredEnv) {
@@ -10,8 +9,7 @@ for (const key of requiredEnv) {
   }
 }
 
-// Create MySQL connection pool
-const db = mysql.createPool({
+const pool = mysql.createPool({
   host: process.env.DB_HOST,
   port: Number(process.env.DB_PORT),
   user: process.env.DB_USER,
@@ -19,11 +17,29 @@ const db = mysql.createPool({
   database: process.env.DB_NAME,
 
   waitForConnections: true,
-  connectionLimit: Number(process.env.DB_CONNECTION_LIMIT || 10),
+  connectionLimit: 10,
   queueLimit: 0,
 
   enableKeepAlive: true,
   keepAliveInitialDelay: 0
 });
 
-module.exports = db;
+// Helper query wrapper to auto-reconnect if Railway drops connection
+async function query(sql, params) {
+  try {
+    const [rows] = await pool.query(sql, params);
+    return rows;
+  } catch (err) {
+    if (err.code === "PROTOCOL_CONNECTION_LOST") {
+      console.log("Reconnecting to MySQL...");
+      const [rows] = await pool.query(sql, params);
+      return rows;
+    }
+    throw err;
+  }
+}
+
+module.exports = {
+  query,
+  pool
+};
